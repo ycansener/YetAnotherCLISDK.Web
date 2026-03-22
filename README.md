@@ -3,7 +3,7 @@
 Blazor Server components for [YetAnotherCLISDK](https://github.com/ycansener/YetAnotherCLISDK) — a CLI-like terminal interface for web applications.
 
 [![NuGet](https://img.shields.io/nuget/v/YetAnotherCLISDK.Web)](https://www.nuget.org/packages/YetAnotherCLISDK.Web)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: GNU General Public License v3.0](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
