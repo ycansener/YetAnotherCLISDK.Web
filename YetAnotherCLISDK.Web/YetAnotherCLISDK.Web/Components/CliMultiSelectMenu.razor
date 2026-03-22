@@ -1,0 +1,67 @@
+<div class="cli-menu" @onkeydown="HandleKey" tabindex="0" @ref="_element">
+    <div class="cli-menu-prompt">@Prompt</div>
+    @for (int i = 0; i < Options.Count; i++)
+    {
+        var idx = i;
+        var opt = Options[idx];
+        var isSelected = idx == _selectedIndex;
+        var isChecked  = _checked.Contains(idx);
+        <div class="cli-menu-item @(isSelected ? "selected" : "")" @onclick="() => Toggle(idx)">
+            <span class="cli-menu-check">@(isChecked ? CheckedChar : UncheckedChar)</span>
+            <span>@opt.Label</span>
+        </div>
+    }
+    <div style="margin-top:0.5rem">
+        <button class="cli-menu-submit" @onclick="Submit">Confirm (@_checked.Count selected)</button>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string                       Prompt       { get; set; } = "";
+    [Parameter]                 public List<CliMenuOption>          Options      { get; set; } = [];
+    [Parameter]                 public string                       CheckedChar  { get; set; } = "✓";
+    [Parameter]                 public string                       UncheckedChar{ get; set; } = "○";
+    [Parameter]                 public EventCallback<string[]>      OnConfirm    { get; set; }
+
+    private readonly HashSet<int> _checked = [];
+    private int                   _selectedIndex;
+    private ElementReference      _element;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await _element.FocusAsync();
+    }
+
+    private void Toggle(int index)
+    {
+        _selectedIndex = index;
+        if (!_checked.Add(index)) _checked.Remove(index);
+    }
+
+    private async Task HandleKey(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "ArrowUp":
+                _selectedIndex = Math.Max(0, _selectedIndex - 1);
+                break;
+            case "ArrowDown":
+                _selectedIndex = Math.Min(Options.Count - 1, _selectedIndex + 1);
+                break;
+            case " ":
+                Toggle(_selectedIndex);
+                break;
+            case "Enter":
+                await Submit();
+                break;
+        }
+    }
+
+    private async Task Submit()
+    {
+        var selected = _checked.OrderBy(i => i)
+                               .Select(i => Options[i].Label)
+                               .ToArray();
+        await OnConfirm.InvokeAsync(selected);
+    }
+}

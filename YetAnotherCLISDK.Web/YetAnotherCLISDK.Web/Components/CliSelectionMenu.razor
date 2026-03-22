@@ -1,0 +1,53 @@
+<div class="cli-menu" @onkeydown="HandleKey" tabindex="0" @ref="_element">
+    <div class="cli-menu-prompt">@Prompt</div>
+    @for (int i = 0; i < Options.Count; i++)
+    {
+        var idx = i;
+        var opt = Options[idx];
+        var isSelected = idx == _selectedIndex;
+        <div class="cli-menu-item @(isSelected ? "selected" : "")" @onclick="() => Select(idx)">
+            <span class="cli-menu-pointer">@(isSelected ? Pointer : new string(' ', Pointer.Length))</span>
+            <span style="@(opt.CssColor != null ? $"color:{opt.CssColor}" : "")">@opt.Label</span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string               Prompt   { get; set; } = "";
+    [Parameter]                 public List<CliMenuOption>  Options  { get; set; } = [];
+    [Parameter]                 public string               Pointer  { get; set; } = "❯";
+    [Parameter]                 public EventCallback<string?> OnSelect { get; set; }
+
+    private int              _selectedIndex;
+    private ElementReference _element;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await _element.FocusAsync();
+    }
+
+    private async Task HandleKey(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "ArrowUp":
+                _selectedIndex = Math.Max(0, _selectedIndex - 1);
+                break;
+            case "ArrowDown":
+                _selectedIndex = Math.Min(Options.Count - 1, _selectedIndex + 1);
+                break;
+            case "Enter":
+                await Select(_selectedIndex);
+                break;
+            case "Escape":
+                await OnSelect.InvokeAsync(null);
+                break;
+        }
+    }
+
+    private async Task Select(int index)
+    {
+        _selectedIndex = index;
+        await OnSelect.InvokeAsync(Options[index].Label);
+    }
+}

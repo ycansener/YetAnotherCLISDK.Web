@@ -1,0 +1,20 @@
+<div class="cli-component">
+    @AnsiRenderer.Render(_rule.GetLines())
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public char    Char  { get; set; } = '\u2500'; // ─
+    [Parameter] public Style?  RuleStyle { get; set; }
+    [Parameter] public int?    Width { get; set; }
+
+    private Rule _rule => BuildRule();
+
+    private Rule BuildRule()
+    {
+        var r = new Rule(Title).WithChar(Char);
+        if (RuleStyle != null) r = r.WithStyle(RuleStyle);
+        if (Width.HasValue)    r = r.WithWidth(Width.Value);
+        return r;
+    }
+}

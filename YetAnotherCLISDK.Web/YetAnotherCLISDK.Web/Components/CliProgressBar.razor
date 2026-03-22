@@ -1,0 +1,35 @@
+<div class="cli-progress">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <span class="cli-progress-label">@Label</span>
+    }
+    <span>[</span><span class="cli-progress-fill">@(new string(FillChar, FilledCount))</span><span class="cli-progress-empty">@(new string(EmptyChar, EmptyCount))</span><span>]</span>
+    <span class="cli-progress-pct">@Percentage%</span>
+</div>
+
+@code {
+    [Parameter] public double  Total    { get; set; } = 100;
+    [Parameter] public double  Value    { get; set; } = 0;
+    [Parameter] public string? Label    { get; set; }
+    [Parameter] public int     Width    { get; set; } = 40;
+    [Parameter] public char    FillChar { get; set; } = '█';
+    [Parameter] public char    EmptyChar{ get; set; } = '░';
+
+    private int Percentage  => (int)Math.Round(Math.Clamp(Value / Total * 100, 0, 100));
+    private int FilledCount => (int)Math.Round(Math.Clamp(Value / Total * Width, 0, Width));
+    private int EmptyCount  => Width - FilledCount;
+
+    /// <summary>Advance progress by the given amount and refresh the UI.</summary>
+    public Task Advance(double amount)
+    {
+        Value = Math.Clamp(Value + amount, 0, Total);
+        return InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>Set progress to an absolute value and refresh the UI.</summary>
+    public Task SetValue(double value)
+    {
+        Value = Math.Clamp(value, 0, Total);
+        return InvokeAsync(StateHasChanged);
+    }
+}

@@ -1,0 +1,23 @@
+<div class="cli-component">
+    @AnsiRenderer.Render(_chart.GetLines())
+</div>
+
+@code {
+    [Parameter] public string?              Title        { get; set; }
+    [Parameter] public int                  BarWidth     { get; set; } = 20;
+    [Parameter] public Color?               DefaultColor { get; set; }
+    [Parameter] public List<CliBar>         Bars         { get; set; } = [];
+
+    private BarChart _chart => BuildChart();
+
+    private BarChart BuildChart()
+    {
+        var c = new BarChart();
+        if (Title        != null) c = c.WithTitle(Title);
+        if (DefaultColor != null) c = c.WithDefaultColor(DefaultColor.Value);
+        c = c.WithBarWidth(BarWidth);
+        foreach (var bar in Bars)
+            c = c.AddBar(bar.Label, bar.Value, bar.Color);
+        return c;
+    }
+}

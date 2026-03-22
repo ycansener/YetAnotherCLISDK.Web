@@ -1,0 +1,24 @@
+<div class="cli-component">
+    @AnsiRenderer.Render(_tree.GetLines())
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string                      RootLabel { get; set; } = "";
+    [Parameter]                 public List<CliTreeNode>           Nodes     { get; set; } = [];
+
+    private TreeView _tree => BuildTree();
+
+    private TreeView BuildTree()
+    {
+        var t = new TreeView(RootLabel);
+        foreach (var node in Nodes)
+            t = t.AddNode(node.Label, node.Children.Count > 0 ? sub => AddChildren(sub, node.Children) : null);
+        return t;
+    }
+
+    private static void AddChildren(TreeView tree, List<CliTreeNode> children)
+    {
+        foreach (var child in children)
+            tree.AddNode(child.Label, child.Children.Count > 0 ? sub => AddChildren(sub, child.Children) : null);
+    }
+}

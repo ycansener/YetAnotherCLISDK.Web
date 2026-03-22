@@ -1,0 +1,27 @@
+<div class="cli-component">
+    @AnsiRenderer.Render(_panel.GetLines())
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Content { get; set; } = "";
+    [Parameter] public string?      Title       { get; set; }
+    [Parameter] public BorderStyle? Border      { get; set; }
+    [Parameter] public Style?       BorderColor { get; set; }
+    [Parameter] public Style?       TitleStyle  { get; set; }
+    [Parameter] public int          PaddingX    { get; set; } = 1;
+    [Parameter] public int          PaddingY    { get; set; } = 0;
+    [Parameter] public int?         Width       { get; set; }
+
+    private Panel _panel => BuildPanel();
+
+    private Panel BuildPanel()
+    {
+        var p = new Panel(Content).WithPadding(PaddingX, PaddingY);
+        if (Title       != null) p = p.WithTitle(Title);
+        if (Border      != null) p = p.WithBorder(Border);
+        if (BorderColor != null) p = p.WithBorderStyle(BorderColor);
+        if (TitleStyle  != null) p = p.WithTitleStyle(TitleStyle);
+        if (Width.HasValue)      p = p.WithWidth(Width.Value);
+        return p;
+    }
+}

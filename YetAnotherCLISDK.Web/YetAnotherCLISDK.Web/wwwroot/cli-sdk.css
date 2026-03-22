@@ -1,0 +1,157 @@
+/* ============================================================
+   YetAnotherCLISDK.Web — Terminal Component Theme
+   ============================================================ */
+
+:root {
+    --cli-bg: #1e1e1e;
+    --cli-fg: #d4d4d4;
+    --cli-font: 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace;
+    --cli-font-size: 14px;
+    --cli-line-height: 1.5;
+    --cli-accent: #4ec9b0;
+    --cli-selection-bg: #264f78;
+    --cli-dim: rgba(255,255,255,0.4);
+}
+
+/* ── Terminal container ─────────────────────────────────── */
+.cli-terminal {
+    background-color: var(--cli-bg);
+    color: var(--cli-fg);
+    font-family: var(--cli-font);
+    font-size: var(--cli-font-size);
+    line-height: var(--cli-line-height);
+    padding: 1.25rem 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+/* ── ANSI rendered output (used by static components) ───── */
+.cli-output {
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    background: transparent;
+    color: inherit;
+    border: none;
+    display: block;
+}
+
+.cli-component {
+    display: inline-block;
+    margin-bottom: 0.25rem;
+}
+
+/* ── Blink animation ────────────────────────────────────── */
+@keyframes cli-blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+
+/* ── Spinner ────────────────────────────────────────────── */
+.cli-spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--cli-font);
+    font-size: var(--cli-font-size);
+}
+
+.cli-spinner-frame {
+    color: var(--cli-accent);
+    display: inline-block;
+    min-width: 1ch;
+}
+
+/* ── Progress bar ───────────────────────────────────────── */
+.cli-progress {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--cli-font);
+    font-size: var(--cli-font-size);
+    white-space: pre;
+}
+
+.cli-progress-label {
+    color: var(--cli-fg);
+}
+
+.cli-progress-fill {
+    color: var(--cli-accent);
+}
+
+.cli-progress-empty {
+    color: #444;
+}
+
+.cli-progress-pct {
+    color: #9cdcfe;
+    min-width: 4ch;
+    text-align: right;
+}
+
+/* ── Selection / Multi-select menus ────────────────────── */
+.cli-menu {
+    outline: none;
+    font-family: var(--cli-font);
+    font-size: var(--cli-font-size);
+    line-height: var(--cli-line-height);
+    display: inline-block;
+    min-width: 20ch;
+}
+
+.cli-menu-prompt {
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    color: var(--cli-fg);
+}
+
+.cli-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 1px 0.5rem;
+    cursor: pointer;
+    white-space: pre;
+    user-select: none;
+}
+
+.cli-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.cli-menu-item.selected {
+    background-color: var(--cli-selection-bg);
+}
+
+.cli-menu-pointer {
+    color: var(--cli-accent);
+    margin-right: 0.4rem;
+    min-width: 1.2ch;
+    display: inline-block;
+}
+
+.cli-menu-check {
+    color: var(--cli-accent);
+    margin-right: 0.4rem;
+    min-width: 1.2ch;
+    display: inline-block;
+}
+
+.cli-menu-submit {
+    margin-top: 0.5rem;
+    padding: 0.15rem 0.75rem;
+    background: #264f78;
+    color: var(--cli-fg);
+    border: 1px solid #4ec9b0;
+    border-radius: 4px;
+    font-family: var(--cli-font);
+    font-size: var(--cli-font-size);
+    cursor: pointer;
+}
+
+.cli-menu-submit:hover {
+    background: #3a6ea8;
+}

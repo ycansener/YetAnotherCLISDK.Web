@@ -1,0 +1,31 @@
+<div class="cli-component">
+    @AnsiRenderer.Render(_table.GetLines())
+</div>
+
+@code {
+    [Parameter] public string?                       Title       { get; set; }
+    [Parameter] public BorderStyle?                  Border      { get; set; }
+    [Parameter] public Style?                        BorderColor { get; set; }
+    [Parameter] public Style?                        HeaderStyle { get; set; }
+    [Parameter] public List<(string Header, Alignment Align)> Columns { get; set; } = [];
+    [Parameter] public List<string[]>                Rows        { get; set; } = [];
+
+    private Table _table => BuildTable();
+
+    private Table BuildTable()
+    {
+        var t = new Table();
+        if (Title       != null) t = t.WithTitle(Title);
+        if (Border      != null) t = t.WithBorder(Border);
+        if (BorderColor != null) t = t.WithBorderStyle(BorderColor);
+        if (HeaderStyle != null) t = t.WithHeaderStyle(HeaderStyle);
+
+        foreach (var (header, align) in Columns)
+            t = t.AddColumn(header, align);
+
+        foreach (var row in Rows)
+            t = t.AddRow(row);
+
+        return t;
+    }
+}

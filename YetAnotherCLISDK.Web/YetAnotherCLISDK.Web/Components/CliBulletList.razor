@@ -1,0 +1,24 @@
+<div class="cli-component">
+    @AnsiRenderer.Render(_list.GetLines())
+</div>
+
+@code {
+    [Parameter] public string?            Title  { get; set; }
+    [Parameter] public char               Bullet { get; set; } = '•';
+    [Parameter] public int                Indent { get; set; } = 2;
+    [Parameter] public List<string>       Items  { get; set; } = [];
+
+    private BulletList _list => BuildList();
+
+    private BulletList BuildList()
+    {
+        var l = new BulletList(Title)
+            .WithBullet(Bullet.ToString())
+            .WithIndent(Indent);
+
+        foreach (var item in Items)
+            l = l.AddItem(item);
+
+        return l;
+    }
+}

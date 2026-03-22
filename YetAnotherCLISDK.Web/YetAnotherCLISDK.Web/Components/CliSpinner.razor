@@ -1,0 +1,47 @@
+@implements IDisposable
+
+<span class="cli-spinner">
+    <span class="cli-spinner-frame">@_frame</span>
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <span>@Label</span>
+    }
+</span>
+
+@code {
+    public enum CliSpinnerStyle { Dots, Line, Arrow, Clock, Bounce, Pulse }
+
+    private static readonly string[][] FrameSets =
+    [
+        ["⣾","⣽","⣻","⢿","⡿","⣟","⣯","⣷"],           // Dots
+        ["-", "\\", "|", "/"],                          // Line
+        ["←","↖","↑","↗","→","↘","↓","↙"],             // Arrow
+        ["🕐","🕑","🕒","🕓","🕔","🕕","🕖","🕗","🕘","🕙","🕚","🕛"], // Clock
+        ["⠁","⠂","⠄","⡀","⢀","⠠","⠐","⠈"],           // Bounce
+        ["▁","▃","▄","▅","▆","▇","█","▇","▆","▅","▄","▃"], // Pulse
+    ];
+
+    [Parameter] public CliSpinnerStyle Style      { get; set; } = CliSpinnerStyle.Dots;
+    [Parameter] public string?         Label      { get; set; }
+    [Parameter] public int             IntervalMs { get; set; } = 80;
+
+    private string _frame = "";
+    private int    _frameIndex;
+    private System.Threading.Timer? _timer;
+
+    protected override void OnInitialized()
+    {
+        _frame = FrameSets[(int)Style][0];
+        _timer = new System.Threading.Timer(Tick, null, 0, IntervalMs);
+    }
+
+    private void Tick(object? _)
+    {
+        var frames = FrameSets[(int)Style];
+        _frameIndex = (_frameIndex + 1) % frames.Length;
+        _frame = frames[_frameIndex];
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}

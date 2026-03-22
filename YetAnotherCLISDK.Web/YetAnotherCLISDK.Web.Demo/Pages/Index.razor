@@ -1,0 +1,209 @@
+﻿@page "/"
+
+<PageTitle>YetAnotherCLISDK.Web — Component Showcase</PageTitle>
+
+<div class="cli-terminal">
+
+    @* ── Panels ─────────────────────────────────────────────── *@
+    <CliRule Title="Panels" />
+
+    <CliPanel Content="A simple panel with default border."
+              Title="Default Panel"
+              Border="@BorderStyle.Single" />
+
+    <CliPanel Content="Rounded borders look great in the terminal!"
+              Title="Rounded Panel"
+              Border="@BorderStyle.Rounded"
+              BorderColor="@(new Style { Foreground = Color.Cyan })"
+              TitleStyle="@(new Style { Foreground = Color.Yellow, Bold = true })"
+              PaddingX="2" PaddingY="1" />
+
+    <CliPanel Content="[bold green]Success:[/] Operation completed."
+              Title="Markup Panel"
+              Border="@BorderStyle.Heavy"
+              BorderColor="@(new Style { Foreground = Color.Green })" />
+
+    @* ── Rule ───────────────────────────────────────────────── *@
+    <CliRule Title="Rules &amp; Dividers"
+             RuleStyle="@(new Style { Foreground = Color.DarkCyan })" />
+
+    <CliRule />
+    <CliRule Title="Section" />
+
+    @* ── Table ──────────────────────────────────────────────── *@
+    <CliRule Title="Tables"
+             RuleStyle="@(new Style { Foreground = Color.DarkCyan })" />
+
+    <CliTable Title="BTC Markets"
+              Border="@BorderStyle.Rounded"
+              BorderColor="@(new Style { Foreground = Color.Blue })"
+              HeaderStyle="@(new Style { Foreground = Color.Yellow, Bold = true })"
+              Columns="@_tableColumns"
+              Rows="@_tableRows" />
+
+    @* ── Lists ──────────────────────────────────────────────── *@
+    <CliRule Title="Lists"
+             RuleStyle="@(new Style { Foreground = Color.DarkCyan })" />
+
+    <div style="display:flex;gap:2rem;flex-wrap:wrap">
+        <CliBulletList Title="Features"
+                       Items="@(["ANSI → HTML rendering","Native Blazor components","Interactive menus","Real-time progress","Spinner animations"])" />
+
+        <CliOrderedList Title="Getting Started"
+                        NumberStyle="@(new Style { Foreground = Color.Cyan, Bold = true })"
+                        Items="@(["Install NuGet package","Add CSS link to _Host","Use components in Razor","Enjoy the terminal look"])" />
+    </div>
+
+    @* ── Tree ───────────────────────────────────────────────── *@
+    <CliRule Title="Tree View"
+             RuleStyle="@(new Style { Foreground = Color.DarkCyan })" />
+
+    <CliTreeView RootLabel="YetAnotherCLISDK.Web" Nodes="@_treeNodes" />
+
+    @* ── Bar Chart ──────────────────────────────────────────── *@
+    <CliRule Title="Bar Chart"
+             RuleStyle="@(new Style { Foreground = Color.DarkCyan })" />
+
+    <CliBarChart Title="Crypto Portfolio %" BarWidth="30" Bars="@_chartBars" />
+
+    @* ── Progress Bar ───────────────────────────────────────── *@
+    <CliRule Title="Progress Bar"
+             RuleStyle="@(new Style { Foreground = Color.DarkCyan })" />
+
+    <div style="display:flex;flex-direction:column;gap:0.5rem">
+        <CliProgressBar @ref="_progress" Total="100" Value="@_progressValue"
+                        Label="Syncing" Width="40" />
+        <div style="display:flex;gap:0.5rem;margin-top:0.25rem">
+            <button class="cli-menu-submit" @onclick="AdvanceProgress">+10%</button>
+            <button class="cli-menu-submit" @onclick="ResetProgress">Reset</button>
+        </div>
+    </div>
+
+    @* ── Spinner ────────────────────────────────────────────── *@
+    <CliRule Title="Spinners"
+             RuleStyle="@(new Style { Foreground = Color.DarkCyan })" />
+
+    <div style="display:flex;gap:2rem;flex-wrap:wrap">
+        <CliSpinner Style="CliSpinner.CliSpinnerStyle.Dots"   Label="Dots" />
+        <CliSpinner Style="CliSpinner.CliSpinnerStyle.Line"   Label="Line" />
+        <CliSpinner Style="CliSpinner.CliSpinnerStyle.Bounce" Label="Bounce" />
+        <CliSpinner Style="CliSpinner.CliSpinnerStyle.Pulse"  Label="Pulse" IntervalMs="120" />
+    </div>
+
+    @* ── Selection Menu ─────────────────────────────────────── *@
+    <CliRule Title="Interactive Menus"
+             RuleStyle="@(new Style { Foreground = Color.DarkCyan })" />
+
+    <div style="display:flex;gap:3rem;flex-wrap:wrap;align-items:flex-start">
+        <div>
+            <p style="margin:0 0 0.25rem">Single select (↑↓ + Enter):</p>
+            <CliSelectionMenu Prompt="Choose a network:"
+                              Options="@_menuOptions"
+                              OnSelect="@(v => _menuResult = v ?? "(cancelled)")" />
+            @if (_menuResult != null)
+            {
+                <p style="margin-top:0.4rem;color:#4ec9b0">Selected: @_menuResult</p>
+            }
+        </div>
+
+        <div>
+            <p style="margin:0 0 0.25rem">Multi-select (Space + Enter):</p>
+            <CliMultiSelectMenu Prompt="Choose components:"
+                                Options="@_multiOptions"
+                                OnConfirm="@(vals => _multiResult = vals)" />
+            @if (_multiResult.Length > 0)
+            {
+                <p style="margin-top:0.4rem;color:#4ec9b0">Confirmed: @string.Join(", ", _multiResult)</p>
+            }
+        </div>
+    </div>
+
+</div>
+
+@code {
+    /* ── Table data ──────────────────────────────────────── */
+    private List<(string, YetAnotherCLISDK.Core.Alignment)> _tableColumns =
+    [
+        ("Pair",   YetAnotherCLISDK.Core.Alignment.Left),
+        ("Price",  YetAnotherCLISDK.Core.Alignment.Right),
+        ("24h %",  YetAnotherCLISDK.Core.Alignment.Right),
+        ("Volume", YetAnotherCLISDK.Core.Alignment.Right),
+    ];
+
+    private List<string[]> _tableRows =
+    [
+        ["BTC/USDT", "$67,420", "[bold green]+2.34%[/]", "$1.2B"],
+        ["ETH/USDT", "$3,512",  "[bold green]+1.87%[/]", "$820M"],
+        ["SOL/USDT", "$142",    "[bold red]-0.52%[/]",   "$340M"],
+        ["BNB/USDT", "$412",    "[bold green]+0.91%[/]", "$215M"],
+    ];
+
+    /* ── Tree data ───────────────────────────────────────── */
+    private List<CliTreeNode> _treeNodes =
+    [
+        new() { Label = "Components", Children =
+        [
+            new() { Label = "CliPanel.razor" },
+            new() { Label = "CliTable.razor" },
+            new() { Label = "CliRule.razor" },
+            new() { Label = "CliBulletList.razor" },
+            new() { Label = "CliOrderedList.razor" },
+            new() { Label = "CliTreeView.razor" },
+            new() { Label = "CliBarChart.razor" },
+            new() { Label = "CliProgressBar.razor" },
+            new() { Label = "CliSpinner.razor" },
+            new() { Label = "CliSelectionMenu.razor" },
+            new() { Label = "CliMultiSelectMenu.razor" },
+        ]},
+        new() { Label = "AnsiRenderer.cs" },
+        new() { Label = "Models.cs" },
+        new() { Label = "wwwroot", Children =
+        [
+            new() { Label = "cli-sdk.css" }
+        ]},
+    ];
+
+    /* ── Chart data ──────────────────────────────────────── */
+    private List<CliBar> _chartBars =
+    [
+        new() { Label = "BTC",   Value = 45.2, Color = Color.Orange },
+        new() { Label = "ETH",   Value = 28.7, Color = Color.Blue },
+        new() { Label = "SOL",   Value = 12.1, Color = Color.Purple },
+        new() { Label = "Other", Value = 14.0, Color = Color.DarkCyan },
+    ];
+
+    /* ── Progress ────────────────────────────────────────── */
+    private CliProgressBar? _progress;
+    private double _progressValue = 35;
+
+    private void AdvanceProgress()
+    {
+        _progressValue = Math.Min(100, _progressValue + 10);
+    }
+
+    private void ResetProgress()
+    {
+        _progressValue = 0;
+    }
+
+    /* ── Menus ───────────────────────────────────────────── */
+    private List<CliMenuOption> _menuOptions =
+    [
+        new() { Label = "Mainnet",  CssColor = "#4ec9b0" },
+        new() { Label = "Testnet",  CssColor = "#9cdcfe" },
+        new() { Label = "Devnet",   CssColor = "#dcdcaa" },
+        new() { Label = "Localnet" },
+    ];
+
+    private List<CliMenuOption> _multiOptions =
+    [
+        new() { Label = "CliPanel" },
+        new() { Label = "CliTable" },
+        new() { Label = "CliSpinner" },
+        new() { Label = "CliProgressBar" },
+        new() { Label = "CliSelectionMenu" },
+    ];
+
+    private string? _menuResult;
+    private string[] _multiResult = [];
+}

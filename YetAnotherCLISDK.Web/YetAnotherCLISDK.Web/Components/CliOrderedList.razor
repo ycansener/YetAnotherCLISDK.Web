@@ -1,0 +1,20 @@
+<div class="cli-component">
+    @AnsiRenderer.Render(_list.GetLines())
+</div>
+
+@code {
+    [Parameter] public string?      Title       { get; set; }
+    [Parameter] public Style?       NumberStyle { get; set; }
+    [Parameter] public List<string> Items       { get; set; } = [];
+
+    private OrderedList _list => BuildList();
+
+    private OrderedList BuildList()
+    {
+        var l = new OrderedList(Title);
+        if (NumberStyle != null) l = l.WithNumberStyle(NumberStyle);
+        foreach (var item in Items)
+            l = l.AddItem(item);
+        return l;
+    }
+}
